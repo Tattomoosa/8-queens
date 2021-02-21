@@ -2,9 +2,9 @@ import time
 from Population import Population
 
 # How many steps between printing an update
-PRINT_EVERY = 1
+PRINT_EVERY = 10
 # Size of population each step
-POP_SIZE = 10
+POP_SIZE = 250
 # If no answer is found in this many iterations, give up
 ITER_MAX = 100_000
 # Chance of mutation - per child

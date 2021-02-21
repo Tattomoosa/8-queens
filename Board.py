@@ -14,28 +14,18 @@ class Board:
 
     @staticmethod
     def breed_parents(parent0, parent1):
-        def child(parent0, parent1, crossover):
-            genes = []
-            for i in range(8):
-                if i < crossover:
-                    genes.append(parent0.genes[i])
-                else:
-                    genes.append(parent1.genes[i])
-            # mutate
-            if random.uniform(0, 1) < Board.mutation_chance:
-                i = random.randint(0,7)
-                genes[i] = random.randint(0,7)
-            return Board(genes)
-
-        def mutate(self):
-            print(f'mutating {self.gene_str()}')
-            genes = self.genes.copy()
-
         crossover = random.randint(0,7)
-        return child(parent0, parent1, crossover)
-        # child0 = child(parent0, parent1, crossover)
-        # child1 = child(parent1, parent0, crossover)
-        # return (child0, child1)
+        genes = []
+        for i in range(8):
+            if i < crossover:
+                genes.append(parent0.genes[i])
+            else:
+                genes.append(parent1.genes[i])
+        # mutate
+        if random.uniform(0, 1) < Board.mutation_chance:
+            i = random.randint(0,7)
+            genes[i] = random.randint(0,7)
+        return Board(genes)
 
 
     @staticmethod
@@ -86,15 +76,18 @@ class Board:
         collisions = 0
         for (x0, y0) in enumerate(self.genes):
             for (x1, y1) in enumerate(self.genes[x0+1:]):
+                x1 += x0+1
                 if Board.within_queen_move(x0, y0, x1, y1):
+                    if verbose:
+                        print(f'({x0}, {y0}) can collide with ({x1}, {y1})')
                     collisions += 1
         return collisions
 
-    def __eq__(self, other):
-        return self.genes == other.genes
+    # def __eq__(self, other):
+    #     return self.genes == other.genes
 
-    def __ne__(self, other):
-        return not self.genes == other.genes
+    # def __ne__(self, other):
+    #     return not self.genes == other.genes
 
     def __add__(self, other):
         return self.breed(other)

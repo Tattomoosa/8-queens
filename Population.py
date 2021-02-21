@@ -10,7 +10,6 @@ class Population:
         pop = []
         for i in range(size):
             pop.append(Board.random())
-        # pop.sort(key=lambda x : x.collisions)
         self.pop = pop
         self.size = size
         Board.mutation_chance = mutation_chance
@@ -21,7 +20,12 @@ class Population:
 
     def step(self):
         self.update_fitness()
-        parents = self.select_parents()
+        children = []
+        for i in range(self.size):
+            parents = self.select_parents()
+            children.append(parents[0].breed(parents[1]))
+        self.pop = children
+        self.generation += 1
 
     def sort(self):
         self.pop.sort(key=lambda x : x.score)
@@ -32,91 +36,28 @@ class Population:
         for pop in self.pop:
             fitness_sum += pop.score
         for pop in self.pop:
-            pop.fitness = pop.score / fitness_sum
+            # on low population sizes, every board can wind up with a fitness of
+            # 0. seems like maybe that shouldn't happen, but since it does let's
+            # stop it.
+            pop.fitness = (pop.score / fitness_sum) if fitness_sum != 0 else 0
 
-    def select_parents(self, fitness):
-        parent0 = None
+    def select_parents(self):
+        parent0, parent1 = None, None
         while parent0 is None:
             rnd = random.uniform(0,1)
-            choices = [x for x in self.pop if x.fitness < ]
+            choices = [x for x in self.pop if x.fitness >= rnd]
+            if len(choices) >= 1:
+                parent0 = random.choice(choices)
 
-    def select_fitness_then_breed(self, do_print=False):
-        # cull last 3
-        # self.sort()
-        # for i in range(0, 3):
-            # self.pop.pop()
+        while parent1 is None:
+            rnd = random.uniform(0,1)
+            choices = [x for x in self.pop if x.fitness >= rnd]
+            if len(choices) >= 1:
+                p = random.choice(choices)
+                if p != parent0:
+                    parent1 = p
 
-        if do_print:
-            print("SURVIVORS")
-            Board.printn(self.pop)
-            input()
-
-        children = []
-
-        # while len(self.pop) < self.size:
-        while len(children) < self.size:
-            for parent0 in self.pop:
-                parent1 = self.pop[random.randint(0, len(self.pop) - 1)]
-                children.append(parent0 + parent1)
-
-        if do_print:
-            print("CHILDREN")
-            Board.printn(children)
-            input()
-
-        self.pop.extend(children)
-        self.sort()
-        while len(self.pop) > self.size:
-            self.pop.pop()
-
-        if do_print:
-            print("POPULATION")
-            Board.printn(self.pop)
-            input()
-
-        self.generation += 1
-
-
-
-
-    # this way is naive, an initial exploration. it gets stuck at score=24 every time
-    # which is interesting but not super helpful.
-    def best_of_random_method(self):
-        pop = []
-        while len(pop) < self.size:
-            potential = Population.pickRandomIndividuals(self.pop, PICK_PARENTS_FROM)
-            parent0 = Population.pickRandomBestIndividual(potential)
-            parent1 = None
-            while parent1 is None or parent0 == parent1:
-                potential = Population.pickRandomIndividuals(self.pop, PICK_PARENTS_FROM)
-                parent1 = Population.pickRandomBestIndividual(potential)
-            pop.extend(parent0 + parent1)
-
-        while len(pop) > self.size:
-            pop.pop()
-
-        self.pop = pop
-        self.generation += 1
-
-    @staticmethod
-    def pickRandomBestIndividual(boards):
-        best = [boards[0]]
-        for board in boards[1:]:
-            if board.score > best[0].score:
-                best = [board]
-            elif board.score == best[0].score:
-                best.append(board)
-        return best[random.randint(0, len(best) - 1)]
-
-    @staticmethod
-    def pickRandomIndividuals(boards, count):
-        picked = []
-        while len(picked) < count:
-            board = boards[random.randint(0, len(boards) - 1)]
-            if board not in picked:
-                picked.append(board)
-            picked.append(board)
-        return picked
+        return (parent0, parent1)
 
     def print(self):
         # clear screen

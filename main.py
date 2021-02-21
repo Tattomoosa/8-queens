@@ -2,13 +2,13 @@ import time
 from Population import Population
 
 # How many steps between printing an update
-PRINT_EVERY = 10
+PRINT_EVERY = 100
 # Size of population each step
-POP_SIZE = 250
+POP_SIZE = 10
 # If no answer is found in this many iterations, give up
 ITER_MAX = 100_000
 # Chance of mutation - per child
-MUT_CHANCE = 0.1
+MUT_CHANCE = 1.0
 
 def plot_results(title, figtitle, best_results, avg_results):
     try:

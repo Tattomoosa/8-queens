@@ -76,18 +76,9 @@ class Board:
         collisions = 0
         for (x0, y0) in enumerate(self.genes):
             for (x1, y1) in enumerate(self.genes[x0+1:]):
-                x1 += x0+1
+                x1 += x0 + 1
                 if Board.within_queen_move(x0, y0, x1, y1):
                     if verbose:
                         print(f'({x0}, {y0}) can collide with ({x1}, {y1})')
                     collisions += 1
         return collisions
-
-    # def __eq__(self, other):
-    #     return self.genes == other.genes
-
-    # def __ne__(self, other):
-    #     return not self.genes == other.genes
-
-    def __add__(self, other):
-        return self.breed(other)

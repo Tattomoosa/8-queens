@@ -1,13 +1,14 @@
+import time
 from Population import Population
 
 # How many steps between printing an update
 PRINT_EVERY = 1
-# Size of popoulation each step
-POP_SIZE = 500
+# Size of population each step
+POP_SIZE = 10
 # If no answer is found in this many iterations, give up
-ITER_MAX = 1000
+ITER_MAX = 100_000
 # Chance of mutation - per child
-MUT_CHANCE = 0.01
+MUT_CHANCE = 0.1
 
 def plot_results(title, figtitle, best_results, avg_results):
     try:
@@ -48,10 +49,10 @@ def main():
 
         pop.step()
 
-    title = 'SUCCESS' if win else 'FAILURE'
+    title = f'SUCCESS at {pop.generation}' if win else 'FAILURE'
     title += f' - Pop Size: {POP_SIZE}, Mutation Chance: {MUT_CHANCE * 100}%'
     figtitle = 'success' if win else 'failure'
-    figtitle += f'_size_{POP_SIZE}_mut_chance_{MUT_CHANCE}_iter_{pop.generation}'
+    figtitle += f'_size_{POP_SIZE}_mut_chance_{MUT_CHANCE}_iter_{pop.generation}_ts_{time.time()}'
     plot_results(title, figtitle, best_info, avg_info)
 
 if __name__ == '__main__':

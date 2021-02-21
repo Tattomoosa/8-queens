@@ -1,21 +1,20 @@
 import random
 
 class Board:
+    mutation_chance = 0.1
 
     def __init__(self, genes):
         self.genes = genes
-        # self.queens = []
-        # for (x, y) in enumerate(genes):
-            # self.add_queen(x, y)
-        self.collisions = self.count_collisions()
-        # self.fitness = 28 - self.count_collisions()
+        # self.collisions = self.count_collisions()
+        self.score = 28 - self.count_collisions()
+        self.fitness = 1.0 # set by Population
 
-    def breed(self, other, mutation_chance = 0):
-        return Board.breed_parents(self, other, mutation_chance)
+    def breed(self, other):
+        return Board.breed_parents(self, other)
 
     @staticmethod
-    def breed_parents(parent0, parent1, mutation_chance = 0):
-        def child(parent0, parent1, crossover, mutation_chance):
+    def breed_parents(parent0, parent1):
+        def child(parent0, parent1, crossover):
             genes = []
             for i in range(8):
                 if i < crossover:
@@ -23,7 +22,7 @@ class Board:
                 else:
                     genes.append(parent1.genes[i])
             # mutate
-            if random.uniform(0, 1) < mutation_chance:
+            if random.uniform(0, 1) < Board.mutation_chance:
                 i = random.randint(0,7)
                 genes[i] = random.randint(0,7)
             return Board(genes)
@@ -33,9 +32,10 @@ class Board:
             genes = self.genes.copy()
 
         crossover = random.randint(0,7)
-        child0 = child(parent0, parent1, crossover, mutation_chance)
-        child1 = child(parent1, parent0, crossover, mutation_chance)
-        return (child0, child1)
+        return child(parent0, parent1, crossover)
+        # child0 = child(parent0, parent1, crossover)
+        # child1 = child(parent1, parent0, crossover)
+        # return (child0, child1)
 
 
     @staticmethod
@@ -62,7 +62,7 @@ class Board:
                 print(' ', end='')
             print()
         for b in boards:
-            print(f'{b.collisions}'.ljust(3) +
+            print(f'{b.score}'.ljust(3) +
                   b.gene_str().rjust(12), end='  ')
         print()
 
@@ -90,3 +90,11 @@ class Board:
                     collisions += 1
         return collisions
 
+    def __eq__(self, other):
+        return self.genes == other.genes
+
+    def __ne__(self, other):
+        return not self.genes == other.genes
+
+    def __add__(self, other):
+        return self.breed(other)

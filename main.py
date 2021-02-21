@@ -1,9 +1,12 @@
 from Population import Population
-from Board import Board
 
+# How many steps between printing an update
 PRINT_EVERY = 1
-POP_SIZE = 1000
+# Size of popoulation each step
+POP_SIZE = 500
+# If no answer is found in this many iterations, give up
 ITER_MAX = 1000
+# Chance of mutation - per child
 MUT_CHANCE = 0.01
 
 def plot_results(title, figtitle, best_results, avg_results):
@@ -39,7 +42,7 @@ def main():
             # clear screen
             print(chr(27) + "[2J")
             pop.print_best()
-            print('\nCONGRATULATIONS! WIN!')
+            print('\nCONGRATULATIONS! YOU WIN!')
             win = True
             break
 
